@@ -1,0 +1,133 @@
+use quickpharma;
+
+
+desc users;
+
+========================================================================
+CREATE TABLE `users` (
+  `user_id` INT NOT NULL AUTO_INCREMENT,
+  `first_name` VARCHAR(50) NOT NULL,
+  `last_name` VARCHAR(50) NULL,
+  `email` VARCHAR(50) NOT NULL,
+  `password` VARCHAR(150) NOT NULL,
+  `mobile_no` VARCHAR(15) NOT NULL,
+  `role` VARCHAR(20) NOT NULL,
+  `create_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `isactive` TINYINT NULL DEFAULT 1,
+  PRIMARY KEY (`user_id`),
+  UNIQUE INDEX `mobile_no_UNIQUE` (`mobile_no` ASC) VISIBLE,
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE);
+
+=============================================================================
+
+CREATE TABLE `product_types` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `type_name` VARCHAR(100) NOT NULL,
+  `type_thumbnail` VARCHAR(200) NULL,
+  PRIMARY KEY (`id`));
+
+========================================================================
+
+CREATE TABLE `products` (
+  `product_id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `description` VARCHAR(500) NULL,
+  `price` DOUBLE NOT NULL,
+  `stocks` INT NOT NULL,
+  `created_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `product_thumbnail` VARCHAR(200) NULL,
+  `product_type_id` INT NOT NULL,
+  `manfact_date` TIMESTAMP NULL,
+  `expiry_date` TIMESTAMP NULL,
+
+  PRIMARY KEY (`product_id`),
+  CONSTRAINT `fk_product_product_type1`
+    FOREIGN KEY (`product_type_id`)
+    REFERENCES `product_types` (`id`)
+   );
+
+============================================================================
+
+CREATE TABLE `address` (
+  `address_id` INT NOT NULL AUTO_INCREMENT,
+  `street` VARCHAR(100) NULL,
+  `city` VARCHAR(50) NOT NULL,
+  `pincode` INT NOT NULL,
+  `state` VARCHAR(50) NULL,
+  `house_no` INT NULL,
+  `user_id` INT NOT NULL,
+  `created_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`address_id`),
+    FOREIGN KEY (`user_id`)
+    REFERENCES `users` (`user_id`)
+   );
+
+
+==================================================================================
+
+CREATE TABLE `orders` (
+  `order_id` INT NOT NULL AUTO_INCREMENT,
+  `order_amount` DOUBLE NULL,
+  `order_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `user_id` INT NOT NULL,
+`address_id` INT NOT NULL,
+  PRIMARY KEY (`order_id`),
+    FOREIGN KEY (`user_id`)
+    REFERENCES `users` (`user_id`),
+FOREIGN KEY (`address_id`)
+    REFERENCES `address` (`address_id`)
+);
+
+
+===================================================================================
+
+CREATE TABLE order_items(
+  order_items_id int NOT NULL AUTO_INCREMENT,
+  order_id int DEFAULT NULL,
+  price double DEFAULT NULL,
+  product_id int DEFAULT NULL,
+  quantity int DEFAULT NULL,
+  PRIMARY KEY (order_items_id),
+  FOREIGN KEY (`order_id`)
+    REFERENCES `orders` (`order_id`),
+FOREIGN KEY (`product_id`)
+    REFERENCES `products` (`product_id`)
+);
+
+
+====================================================================================
+
+
+CREATE TABLE `cart_item` (
+  `cart_id` INT NOT NULL AUTO_INCREMENT,
+  `quantity` INT NULL,
+  `product_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
+  PRIMARY KEY (`cart_id`),
+  FOREIGN KEY(product_id) REFERENCES products(product_id),
+  FOREIGN KEY(user_id) REFERENCES users(user_id));
+
+=====================================================================================
+
+
+
+
+CREATE TABLE cart(
+  cart_id int NOT NULL AUTO_INCREMENT,
+  quantity int DEFAULT NULL,
+  product_id int DEFAULT NULL,
+user_id int DEFAULT NULL,
+  created_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (cart_id),
+  KEY user_id (user_id),
+  KEY product_id (product_id),
+  CONSTRAINT cart_ibfk_1 FOREIGN KEY (user_id) REFERENCES users (user_id),
+  CONSTRAINT cart_ibfk_2 FOREIGN KEY (product_id) REFERENCES products (product_id)
+);
+
+
+===================================================================================================
+
+
+create table contactus(id int PRIMARY KEY AUTO_INCREMENT, name varchar(50), email varchar(50), subject varchar(50), message TEXT);
